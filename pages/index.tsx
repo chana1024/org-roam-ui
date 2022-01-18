@@ -278,7 +278,7 @@ export function GraphPage() {
       if (!ref?.includes('cite')) {
         return acc
       }
-      const key = ref.replaceAll(/cite:(.*)/g, '$1')
+      const key = ref.replace(/cite:(.*)/g, '$1')
       if (!key) {
         return acc
       }

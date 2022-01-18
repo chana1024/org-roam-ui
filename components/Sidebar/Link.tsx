@@ -86,8 +86,8 @@ export const NodeLink = (props: NodeLinkProps) => {
 
   const theme = useTheme()
   const coolHighlightColor = getThemeColor(highlightColor, theme)
-  const type = href.replaceAll(/(.*?)\:?.*/g, '$1')
-  const uri = href.replaceAll(/.*?\:(.*)/g, '$1')
+  const type = href.replace(/(.*?)\:?.*/g, '$1')
+  const uri = href.replace(/.*?\:(.*)/g, '$1')
   const ID = id ?? uri
   const linkText = isWiki ? `[[${children}]]` : children
   return (
@@ -147,7 +147,7 @@ export const PreviewLink = (props: LinkProps) => {
   // see https://github.com/rehypejs/rehype-react/issues/25
   const [orgText, setOrgText] = useState<any>(null)
   const [hover, setHover] = useState(false)
-  const type = href.replaceAll(/(.*?)\:.*/g, '$1')
+  const type = href.replace(/(.*?)\:.*/g, '$1')
 
   const extraNoteStyle = outline ? outlineNoteStyle : viewerNoteStyle
   console.log(previewNode)
@@ -169,7 +169,7 @@ export const PreviewLink = (props: LinkProps) => {
   }
 
   useEffect(() => {
-    if (type.replaceAll(/(http)?.*/g, '$1')) {
+    if (type.replace(/(http)?.*/g, '$1')) {
       return
     }
     if (!!orgText) {
@@ -185,11 +185,11 @@ export const PreviewLink = (props: LinkProps) => {
     return <Text color="gray.700">{children}</Text>
   }
 
-  if (type.replaceAll(/(http)?.*/g, '$1')) {
+  if (type.replace(/(http)?.*/g, '$1')) {
     return <NormalLink href={href}>{children}</NormalLink>
   }
 
-  const uri = href.replaceAll(/.*?\:(.*)/g, '$1')
+  const uri = href.replace(/.*?\:(.*)/g, '$1')
   const getId = (type: string, uri: string) => {
     if (type === 'id') {
       return uri

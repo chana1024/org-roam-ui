@@ -63,7 +63,7 @@ export const TagBar = (props: TagBarProps) => {
             size="sm"
             key={tag}
             variant="outline"
-            colorScheme={tagColors[tag]?.replaceAll(/(.*?)\..*/g, '$1') || undefined}
+            colorScheme={tagColors[tag]?.replace(/(.*?)\..*/g, '$1') || undefined}
           >
             <TagLabel>{tag}</TagLabel>
             {blackList ? (

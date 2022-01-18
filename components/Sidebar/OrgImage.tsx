@@ -31,14 +31,14 @@ export const OrgImage = (props: OrgImageProps) => {
     return `http://localhost:35901/img/${src}`
   }
 
-  if (src.replaceAll(/(http)?.*/g, '$1')) {
-    console.log(src.replaceAll(/(http)?.*/g, '$1'))
+  if (src.replace(/(http)?.*/g, '$1')) {
+    console.log(src.replace(/(http)?.*/g, '$1'))
     return (
       <Image layout="responsive" loader={dumbLoader} src={src} alt="" width="auto" height="auto" />
     )
   }
 
-  const srcName = src.replaceAll(/file:/g, '')
+  const srcName = src.replace(/file:/g, '')
 
   const dir = path.dirname(file)
   const fullPath =
