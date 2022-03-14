@@ -229,10 +229,10 @@ Takes _WS and FRAME as arguments."
 
 (defun org-roam-ui--on-msg-open-node (data)
   "Open a node when receiving DATA from the websocket."
-  (let* ((node (org-roam-node-from-id (alist-get'id data)))
-         (pos (org-roam-node-point node))
-         (buf (org-roam-node-find-noselect node))
-         (id (alist-get 'id data)))
+  (let* ((id (alist-get 'id data))
+          (node (org-roam-node-from-id id))
+          (pos (org-roam-node-point node))
+          (buf (find-file-noselect (org-roam-node-file node))))
     (run-hook-with-args 'org-roam-ui-before-open-node-functions id)
     (unless (window-live-p org-roam-ui--window)
       (if-let ((windows (window-list))
@@ -276,31 +276,32 @@ TODO: Be able to delete individual nodes."
   (org-roam-ui-follow-mode -1)
   (message "Connection with org-roam-ui closed."))
 
-(defun org-roam-ui--send-text (id ws)
-  "Send the text from org-node ID through the websocket WS."
+(defun org-roam-ui--get-text (id)
+  "Retrieve the text from org-node ID."
   (let*
       ((node (org-roam-populate (org-roam-node-create
                                  :id id)))
-       (file (org-roam-node-file node))
-       (text))
+       (file (org-roam-node-file node)))
     (org-roam-with-temp-buffer
         file
-      (setq text
-            (buffer-substring-no-properties (buffer-end -1) (buffer-end 1)))
-      text)
+      (when (> (org-roam-node-level node) 0)
+        ;; Heading nodes have level 1 and greater.
+        (goto-char (org-roam-node-point node))
+        (org-narrow-to-element))
+      (buffer-substring-no-properties (buffer-end -1) (buffer-end 1)))))
+
+(defun org-roam-ui--send-text (id ws)
+  "Send the text from org-node ID through the websocket WS."
+  (let ((text (org-roam-ui--get-text id)))
     (websocket-send-text ws
                          (json-encode
                           `((type . "orgText")
                             (data . ,text))))))
 
-(defservlet* file/:file text/plain ()
-  "Servlet for accessing file contents of org-roam files.
-
-Just sends the complete content of org-roam files rather than the specific
-node, as it's much faster to do that on the UI side."
-  (insert-file-contents-literally (org-link-decode file))
+(defservlet* node/:id text/plain ()
+  "Servlet for accessing node content."
+  (insert (org-roam-ui--get-text (org-link-decode id)))
   (httpd-send-header t "text/plain" 200 :Access-Control-Allow-Origin "*"))
-
 
 (defservlet* img/:file text/plain ()
   "Servlet for accessing images found in org-roam files."
@@ -584,7 +585,6 @@ from all other links."
                           org-attach-id-dir
                         (expand-file-name ".attach/" org-directory)))
           (sub-dirs (org-roam-ui-find-subdirectories)))
-      (message "im doing something")
       (websocket-send-text org-roam-ui-ws-socket
                            (json-encode
                             `((type . "variables")
