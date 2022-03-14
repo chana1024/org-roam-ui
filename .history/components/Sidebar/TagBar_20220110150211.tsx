@@ -1,9 +1,9 @@
+import React from 'react'
+import { initialFilter, TagColors } from '../config'
+import { NodeObject } from 'force-graph'
+import { OrgRoamNode } from '../../api'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { Flex, Tag, TagLabel, TagRightIcon } from '@chakra-ui/react'
-import { NodeObject } from 'force-graph'
-import React from 'react'
-import { OrgRoamNode } from '../../api'
-import { initialFilter, TagColors } from '../config'
 
 export interface TagBarProps {
   filter: typeof initialFilter
@@ -63,7 +63,7 @@ export const TagBar = (props: TagBarProps) => {
             size="sm"
             key={tag}
             variant="outline"
-            colorScheme={tagColors[tag]?.replace(/(.*?)\..*/g, '$1') || undefined}
+            colorScheme={tagColors[tag]?.replaceAll(/(.*?)\..*/g, '$1') || undefined}
           >
             <TagLabel>{tag}</TagLabel>
             {blackList ? (

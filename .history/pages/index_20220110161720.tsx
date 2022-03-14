@@ -1,36 +1,41 @@
+import { HamburgerIcon } from '@chakra-ui/icons'
 import {
   Box,
   Flex,
+  Heading,
   IconButton,
+  Slide,
   Tooltip,
   useDisclosure,
   useOutsideClick,
   useTheme,
 } from '@chakra-ui/react'
 import { useAnimation } from '@lilib/hooks'
-import { useWindowSize } from '@react-hook/window-size'
+import { useWindowSize, useWindowWidth } from '@react-hook/window-size'
 import * as d3int from 'd3-interpolate'
 import { GraphData, LinkObject, NodeObject } from 'force-graph'
-//@ts-expect-error
-import jLouvain from 'jlouvain.js'
 import Head from 'next/head'
 import React, {
   ComponentPropsWithoutRef,
+  forwardRef,
   useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from 'react'
+//@ts-expect-error
+import jLouvain from 'jlouvain.js'
 import type {
   ForceGraph2D as TForceGraph2D,
   ForceGraph3D as TForceGraph3D,
 } from 'react-force-graph'
-import { BiNetworkChart } from 'react-icons/bi'
+import { BiChart, BiNetworkChart } from 'react-icons/bi'
 import { BsReverseLayoutSidebarInsetReverse } from 'react-icons/bs'
 import ReconnectingWebSocket from 'reconnecting-websocket'
 import SpriteText from 'three-spritetext'
 import useUndo from 'use-undo'
+import wrap from 'word-wrap'
 import { OrgRoamGraphReponse, OrgRoamLink, OrgRoamNode } from '../api'
 import {
   algos,
@@ -45,13 +50,13 @@ import {
   TagColors,
 } from '../components/config'
 import { ContextMenu } from '../components/contextmenu'
-import { drawLabels } from '../components/Graph/drawLabels'
 import Sidebar from '../components/Sidebar'
 import { Tweaks } from '../components/Tweaks'
 import { usePersistantState } from '../util/persistant-state'
 import { ThemeContext, ThemeContextProps } from '../util/themecontext'
-import { VariablesContext } from '../util/variablesContext'
 import { openNodeInEmacs } from '../util/webSocketFunctions'
+import { drawLabels } from '../components/Graph/drawLabels'
+import { VariablesContext } from '../util/variablesContext'
 
 const d3promise = import('d3-force-3d')
 
@@ -273,7 +278,7 @@ export function GraphPage() {
       if (!ref?.includes('cite')) {
         return acc
       }
-      const key = ref.replace(/cite:(.*)/g, '$1')
+      const key = ref.replaceAll(/cite:(.*)/g, '$1')
       if (!key) {
         return acc
       }

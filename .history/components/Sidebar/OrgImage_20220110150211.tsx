@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import { Container } from '@chakra-ui/react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import path from 'path'
-import React, { useState } from 'react'
+import { Container } from '@chakra-ui/react'
 //import '../../../public/placeholder.png'
 
 export interface OrgImageProps {
@@ -31,14 +31,14 @@ export const OrgImage = (props: OrgImageProps) => {
     return `http://localhost:35901/img/${src}`
   }
 
-  if (src.replace(/(http)?.*/g, '$1')) {
-    console.log(src.replace(/(http)?.*/g, '$1'))
+  if (src.replaceAll(/(http)?.*/g, '$1')) {
+    console.log(src.replaceAll(/(http)?.*/g, '$1'))
     return (
       <Image layout="responsive" loader={dumbLoader} src={src} alt="" width="auto" height="auto" />
     )
   }
 
-  const srcName = src.replace(/file:/g, '')
+  const srcName = src.replaceAll(/file:/g, '')
 
   const dir = path.dirname(file)
   const fullPath =
